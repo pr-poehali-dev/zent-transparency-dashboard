@@ -7,10 +7,39 @@ import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [time, setTime] = useState(new Date());
+  const [typedText, setTypedText] = useState('');
+  const [hexScroll, setHexScroll] = useState('');
+
+  const fullText = 'TRANSPARENCY_THAT_PAYS.EXE';
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let index = 0;
+    const typeInterval = setInterval(() => {
+      if (index <= fullText.length) {
+        setTypedText(fullText.substring(0, index));
+        index++;
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 100);
+    return () => clearInterval(typeInterval);
+  }, []);
+
+  useEffect(() => {
+    const generateHex = () => {
+      const hex = Array.from({ length: 100 }, () => 
+        Math.random().toString(16).substring(2, 6).toUpperCase()
+      ).join(' ');
+      setHexScroll(hex);
+    };
+    generateHex();
+    const hexInterval = setInterval(generateHex, 3000);
+    return () => clearInterval(hexInterval);
   }, []);
 
   const commissionData = [
@@ -89,13 +118,19 @@ const Index = () => {
             <div className="text-xs text-primary/60 font-mono mb-4">
               {'>'} INITIALIZING PROTOCOL...
             </div>
-            <h1 className="text-8xl md:text-[10rem] font-black tracking-wider text-primary relative scan-line">
-              ZENT
-              <div className="absolute -inset-1 bg-primary/20 blur-xl -z-10" />
-            </h1>
+            <pre className="text-primary/80 text-xs md:text-sm font-mono mb-8 leading-tight">
+{`
+ ████████╗███████╗███╗   ██╗████████╗
+ ╚══██╔══╝██╔════╝████╗  ██║╚══██╔══╝
+    ██║   █████╗  ██╔██╗ ██║   ██║   
+    ██║   ██╔══╝  ██║╚██╗██║   ██║   
+    ██║   ███████╗██║ ╚████║   ██║   
+    ╚═╝   ╚══════╝╚═╝  ╚═══╝   ╚═╝   
+`}
+            </pre>
             <div className="inline-block border-2 border-primary/50 bg-black/80 px-8 py-4">
-              <p className="text-xl md:text-2xl font-bold tracking-widest text-primary">
-                &gt; TRANSPARENCY_THAT_PAYS.EXE
+              <p className="text-xl md:text-2xl font-bold tracking-widest text-primary font-mono">
+                &gt; {typedText}<span className="animate-pulse">_</span>
               </p>
             </div>
           </div>
@@ -355,7 +390,12 @@ const Index = () => {
             ))}
           </div>
 
-          <div className="pt-16 border-t-2 border-primary/30">
+          <div className="pt-16 border-t-2 border-primary/30 space-y-4">
+            <div className="overflow-hidden whitespace-nowrap">
+              <div className="inline-block animate-[scroll_20s_linear_infinite] font-mono text-xs text-primary/40">
+                {hexScroll} {hexScroll}
+              </div>
+            </div>
             <div className="font-mono text-xs text-primary/60 space-y-2">
               <div>© 2026 ZENT PROTOCOL // SOLANA BLOCKCHAIN</div>
               <div>TRANSPARENCY_THAT_PAYS.EXE // ALL SYSTEMS OPERATIONAL</div>

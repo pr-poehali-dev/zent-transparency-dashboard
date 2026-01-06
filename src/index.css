@@ -121,6 +121,15 @@
     }
   }
 
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
   .animate-pulse-green {
     animation: pulse-green 2s ease-in-out infinite;
   }
