@@ -94,7 +94,7 @@ const Index = () => {
               </div>
             </div>
             <div className="hidden md:flex gap-1">
-              {['HOME', 'ABOUT', 'TOKENOMICS', 'DASHBOARD', 'CONTACT'].map((section, i) => (
+              {['HOME', 'ABOUT', 'TOKENOMICS', 'ROADMAP', 'DASHBOARD', 'CONTACT'].map((section, i) => (
                 <button
                   key={section}
                   onClick={() => scrollToSection(section.toLowerCase())}
@@ -267,6 +267,104 @@ const Index = () => {
                     {item.name === 'BUYBACK' && '>> PRICE_STABILITY // STRATEGIC_ACQUISITION // MARKET_SUPPORT'}
                     {item.name === 'PARTNERS' && '>> ECOSYSTEM_GROWTH // STRATEGIC_ALLIANCES // DEVELOPMENT_FUND'}
                   </p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap" className="min-h-screen flex items-center justify-center px-6 py-20 relative z-10">
+        <div className="container mx-auto space-y-16">
+          <div className="text-center space-y-6">
+            <div className="text-xs text-primary/60 font-mono">{'>'} EXECUTION_TIMELINE.MAP</div>
+            <h2 className="text-6xl md:text-7xl font-black text-primary">
+              [ROADMAP]<span className="text-secondary">&</span>[FUTURE]
+            </h2>
+          </div>
+
+          <div className="max-w-6xl mx-auto space-y-6">
+            {[
+              {
+                phase: 'I',
+                title: 'FOUNDATION',
+                hex: '0xF1',
+                status: 'ACTIVE',
+                items: [
+                  'Fair launch on Pump.fun',
+                  'Revenue sharing enabled',
+                  'Public on-chain dashboard'
+                ]
+              },
+              {
+                phase: 'II',
+                title: 'YIELD_EXPANSION',
+                hex: '0xF2',
+                status: 'IN_PROGRESS',
+                items: [
+                  'Utility-based NFT collection',
+                  'Enhanced rewards for holders',
+                  'Long-term holding incentives'
+                ]
+              },
+              {
+                phase: 'III',
+                title: 'ECOSYSTEM_GROWTH',
+                hex: '0xF3',
+                status: 'PENDING',
+                items: [
+                  'Strategic volume-focused partnerships',
+                  'Expanded revenue sources',
+                  'Sustainable ecosystem funding'
+                ]
+              },
+              {
+                phase: 'IV',
+                title: 'ECOSYSTEM&PARTNERSHIPS',
+                hex: '0xF4',
+                status: 'PLANNED',
+                items: [
+                  'Strategic partnerships focused on sustainable trading volume',
+                  'Expansion of revenue sources within the ZENT ecosystem',
+                  'Allocation of ecosystem funds to long-term growth initiatives'
+                ]
+              }
+            ].map((roadmap, i) => (
+              <Card
+                key={i}
+                className="group p-8 bg-black border-2 border-primary/30 hover:border-primary transition-all relative overflow-hidden scan-line"
+              >
+                <div className="flex items-start gap-8">
+                  <div className="flex-shrink-0">
+                    <div className="w-20 h-20 border-2 border-primary bg-black flex items-center justify-center relative">
+                      <div className="text-4xl font-black text-primary font-mono">{'>'}{roadmap.phase}</div>
+                      <div className="absolute -top-2 -right-2 text-xs text-primary/40 font-mono bg-black px-2 py-1 border border-primary/30">
+                        {roadmap.hex}
+                      </div>
+                    </div>
+                    <div className={`mt-2 text-xs font-mono text-center px-2 py-1 border ${
+                      roadmap.status === 'ACTIVE' ? 'text-primary border-primary bg-primary/10' :
+                      roadmap.status === 'IN_PROGRESS' ? 'text-secondary border-secondary bg-secondary/10' :
+                      'text-primary/40 border-primary/20 bg-black'
+                    }`}>
+                      {roadmap.status}
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-4">
+                    <h3 className="text-3xl font-black text-primary mb-4">
+                      PHASE_{roadmap.phase} // {roadmap.title}
+                    </h3>
+                    <div className="space-y-3">
+                      {roadmap.items.map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className="mt-1 w-2 h-2 bg-primary flex-shrink-0" />
+                          <p className="text-muted-foreground font-mono text-sm leading-relaxed">
+                            {'>'} {item}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </Card>
             ))}
