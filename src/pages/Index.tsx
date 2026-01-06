@@ -10,7 +10,7 @@ const Index = () => {
   const [typedText, setTypedText] = useState('');
   const [hexScroll, setHexScroll] = useState('');
 
-  const fullText = 'TRANSPARENCY_THAT_PAYS.EXE';
+  const fullText = 'TRANSPARENCY_THAT_PAYS';
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -116,7 +116,7 @@ const Index = () => {
         <div className="container mx-auto text-center space-y-12 relative z-10">
           <div className="space-y-6">
             <div className="text-xs text-primary/60 font-mono mb-4">
-              {'>'} INITIALIZING PROTOCOL...
+              {'>'} INITIALIZING ZENT PROTOCOL...
             </div>
             <pre className="text-primary/80 text-xs md:text-sm font-mono mb-8 leading-tight">
 {`
