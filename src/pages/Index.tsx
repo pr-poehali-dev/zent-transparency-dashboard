@@ -471,7 +471,7 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {[
               { icon: 'MessageCircle', label: 'TELEGRAM', hex: '0xTG', color: 'primary' },
-              { icon: 'X', label: 'X', hex: '0xTW', color: 'secondary' },
+              { icon: 'X', label: 'X.COM', hex: '0xTW', color: 'secondary' },
               { icon: 'Mail', label: 'EMAIL', hex: '0xML', color: 'primary' },
             ].map((contact, i) => (
               <Card
