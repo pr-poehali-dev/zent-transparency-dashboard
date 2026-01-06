@@ -2,31 +2,30 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Bar, BarChart } from 'recharts';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
-  const [scrollY, setScrollY] = useState(0);
+  const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
 
   const commissionData = [
-    { time: 'Jan', value: 45000 },
-    { time: 'Feb', value: 62000 },
-    { time: 'Mar', value: 78000 },
-    { time: 'Apr', value: 95000 },
-    { time: 'May', value: 120000 },
-    { time: 'Jun', value: 145000 },
+    { time: 'JAN', value: 45000, block: 2341 },
+    { time: 'FEB', value: 62000, block: 4782 },
+    { time: 'MAR', value: 78000, block: 7123 },
+    { time: 'APR', value: 95000, block: 9564 },
+    { time: 'MAY', value: 120000, block: 12005 },
+    { time: 'JUN', value: 145000, block: 14346 },
   ];
 
   const distributionData = [
-    { name: 'Holders', value: 70, gradient: 'from-purple-500 to-pink-500' },
-    { name: 'Buyback', value: 20, gradient: 'from-cyan-500 to-blue-500' },
-    { name: 'Partnerships', value: 10, gradient: 'from-violet-500 to-purple-500' },
+    { name: 'HOLDERS', value: 70, hex: '0x70', color: '#00ff41' },
+    { name: 'BUYBACK', value: 20, hex: '0x20', color: '#00ffff' },
+    { name: 'PARTNERS', value: 10, hex: '0x10', color: '#ffff00' },
   ];
 
   const scrollToSection = (section: string) => {
@@ -37,29 +36,46 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="fixed inset-0 bg-gradient-to-br from-purple-900/20 via-background to-cyan-900/20 pointer-events-none" />
-      <div className="fixed top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-float" />
-      <div className="fixed bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-float" style={{ animationDelay: '3s' }} />
+      <div className="fixed inset-0 grid-pattern opacity-30 pointer-events-none" />
+      <div className="fixed inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-green-500/20 font-mono text-xs"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animation: `matrix-fall ${5 + Math.random() * 10}s linear infinite`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          >
+            {Math.random().toString(16).substring(2, 10)}
+          </div>
+        ))}
+      </div>
 
-      <nav className="fixed top-0 w-full z-50 bg-background/40 backdrop-blur-2xl border-b border-border/50">
-        <div className="container mx-auto px-6 py-5">
+      <nav className="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-sm border-b-2 border-primary/50">
+        <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              ZENT
+            <div className="flex items-center gap-4">
+              <div className="text-3xl font-black text-primary tracking-widest animate-pulse-green">
+                [ZENT]
+              </div>
+              <div className="hidden md:block text-xs text-primary/60 font-mono">
+                {time.toISOString().split('T')[1].split('.')[0]} UTC
+              </div>
             </div>
-            <div className="hidden md:flex gap-8">
-              {['home', 'about', 'tokenomics', 'dashboard', 'contacts'].map((section) => (
+            <div className="hidden md:flex gap-1">
+              {['HOME', 'ABOUT', 'TOKENOMICS', 'DASHBOARD', 'CONTACT'].map((section, i) => (
                 <button
                   key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`text-sm font-medium transition-all hover:text-primary capitalize relative group ${
-                    activeSection === section ? 'text-primary' : 'text-muted-foreground'
+                  onClick={() => scrollToSection(section.toLowerCase())}
+                  className={`px-4 py-2 font-bold text-xs transition-all border ${
+                    activeSection === section.toLowerCase()
+                      ? 'bg-primary text-black border-primary'
+                      : 'bg-black/50 text-primary border-primary/30 hover:border-primary hover:bg-primary/10'
                   }`}
                 >
-                  {section}
-                  <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 to-cyan-500 transition-transform origin-left ${
-                    activeSection === section ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
-                  }`} />
+                  [{`0x${i.toString(16).toUpperCase()}`}] {section}
                 </button>
               ))}
             </div>
@@ -68,88 +84,115 @@ const Index = () => {
       </nav>
 
       <section id="home" className="min-h-screen flex items-center justify-center pt-20 px-6 relative">
-        <div className="container mx-auto text-center space-y-10 relative z-10">
-          <div className="animate-fade-in">
-            <h1 className="text-8xl md:text-[12rem] font-bold tracking-tighter bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent mb-6">
+        <div className="container mx-auto text-center space-y-12 relative z-10">
+          <div className="space-y-6">
+            <div className="text-xs text-primary/60 font-mono mb-4">
+              {'>'} INITIALIZING PROTOCOL...
+            </div>
+            <h1 className="text-8xl md:text-[10rem] font-black tracking-wider text-primary relative scan-line">
               ZENT
+              <div className="absolute -inset-1 bg-primary/20 blur-xl -z-10" />
             </h1>
-            <div className="relative inline-block">
-              <p className="text-2xl md:text-3xl font-light tracking-wide text-foreground/90 relative z-10">
-                Transparency That Pays
+            <div className="inline-block border-2 border-primary/50 bg-black/80 px-8 py-4">
+              <p className="text-xl md:text-2xl font-bold tracking-widest text-primary">
+                &gt; TRANSPARENCY_THAT_PAYS.EXE
               </p>
-              <div className="absolute inset-0 blur-xl bg-gradient-to-r from-purple-500/50 to-cyan-500/50 animate-glow" />
             </div>
           </div>
           
-          <p className="text-muted-foreground max-w-3xl mx-auto leading-relaxed text-lg">
-            Revolutionary tokenomics on Solana blockchain. 70% of all trading fees automatically distributed to holders.
-            Experience full transparency with real returns.
-          </p>
+          <div className="max-w-4xl mx-auto space-y-4">
+            <div className="border-l-4 border-primary/50 pl-6 text-left">
+              <p className="text-muted-foreground font-mono text-sm leading-relaxed">
+                {'>'} PROTOCOL: SOLANA BLOCKCHAIN<br/>
+                {'>'} DISTRIBUTION: 70% → HOLDERS | 20% → BUYBACK | 10% → PARTNERS<br/>
+                {'>'} STATUS: ACTIVE | TRANSPARENT | IMMUTABLE
+              </p>
+            </div>
+          </div>
           
-          <div className="flex gap-5 justify-center pt-10">
+          <div className="flex gap-4 justify-center pt-10">
             <Button
               size="lg"
               onClick={() => scrollToSection('about')}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-10 py-7 text-lg font-semibold rounded-2xl shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 transition-all hover:scale-105"
+              className="bg-primary hover:bg-primary/80 text-black font-bold px-10 py-6 text-base border-2 border-primary relative overflow-hidden group"
             >
-              Learn More
+              <span className="relative z-10">[LEARN_MORE]</span>
+              <div className="absolute inset-0 bg-primary/20 translate-y-full group-hover:translate-y-0 transition-transform" />
             </Button>
             <Button
               size="lg"
               variant="outline"
               onClick={() => scrollToSection('dashboard')}
-              className="border-2 border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 backdrop-blur-xl px-10 py-7 text-lg font-semibold rounded-2xl transition-all hover:scale-105 hover:border-cyan-400"
+              className="border-2 border-secondary bg-black hover:bg-secondary/10 text-secondary font-bold px-10 py-6 text-base"
             >
-              Dashboard
+              [ACCESS_DASHBOARD]
             </Button>
+          </div>
+
+          <div className="pt-8 grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+            {[
+              { label: 'BLOCKS', value: '14.3K' },
+              { label: 'TX/SEC', value: '65K' },
+              { label: 'NODES', value: '2.1K' },
+            ].map((stat, i) => (
+              <div key={i} className="border border-primary/30 bg-black/80 p-4">
+                <div className="text-2xl font-bold text-primary font-mono">{stat.value}</div>
+                <div className="text-xs text-primary/60 font-mono">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       <section id="about" className="min-h-screen flex items-center justify-center px-6 py-20 relative z-10">
-        <div className="container mx-auto space-y-20">
+        <div className="container mx-auto space-y-16">
           <div className="text-center space-y-6">
-            <h2 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              About ZENT
+            <div className="text-xs text-primary/60 font-mono">{'>'} PROTOCOL_INFO.SYS</div>
+            <h2 className="text-6xl md:text-7xl font-black text-primary">
+              [ABOUT_ZENT]
             </h2>
-            <p className="text-muted-foreground text-xl max-w-4xl mx-auto leading-relaxed">
-              Zenith Entry Network Token brings unprecedented transparency to cryptocurrency tokenomics
-            </p>
+            <div className="max-w-4xl mx-auto border-l-4 border-primary/50 pl-6 text-left">
+              <p className="text-muted-foreground font-mono text-sm leading-relaxed">
+                ZENITH ENTRY NETWORK TOKEN // BLOCKCHAIN-NATIVE TRANSPARENCY PROTOCOL // 
+                AUTOMATED DISTRIBUTION SYSTEM // SOLANA INFRASTRUCTURE
+              </p>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               {
                 icon: 'Shield',
-                title: 'Full Transparency',
-                description: 'Every transaction tracked. Every fee distributed. Complete visibility into fund allocation.',
-                gradient: 'from-purple-500 to-pink-500'
+                title: 'FULL_TRANSPARENCY',
+                hex: '0xA1',
+                description: 'EVERY TX TRACKED // EVERY FEE DISTRIBUTED // COMPLETE VISIBILITY',
               },
               {
                 icon: 'Zap',
-                title: 'Solana Speed',
-                description: 'Built on Solana for instant transactions and minimal fees. Maximum efficiency.',
-                gradient: 'from-cyan-500 to-blue-500'
+                title: 'SOLANA_SPEED',
+                hex: '0xB2',
+                description: 'INSTANT TRANSACTIONS // MINIMAL FEES // MAXIMUM EFFICIENCY',
               },
               {
                 icon: 'TrendingUp',
-                title: 'Holder Rewards',
-                description: '70% of all trading fees automatically distributed to token holders. Earn passively.',
-                gradient: 'from-violet-500 to-purple-500'
+                title: 'HOLDER_REWARDS',
+                hex: '0xC3',
+                description: '70% AUTO DISTRIBUTION // PROPORTIONAL ALLOCATION // PASSIVE INCOME',
               },
             ].map((feature, i) => (
               <Card
                 key={i}
-                className="group p-10 bg-card/50 backdrop-blur-xl border-border/50 hover:border-transparent transition-all duration-500 relative overflow-hidden hover:scale-105"
+                className="group p-8 bg-black border-2 border-primary/30 hover:border-primary transition-all relative overflow-hidden"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon name={feature.icon} size={32} className="text-white" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-primary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform" />
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-12 h-12 border-2 border-primary bg-primary/10 flex items-center justify-center">
+                    <Icon name={feature.icon} size={24} className="text-primary" />
+                  </div>
+                  <div className="text-xs text-primary/60 font-mono">{feature.hex}</div>
                 </div>
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-purple-400 group-hover:to-cyan-400 transition-all">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed text-base">{feature.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-primary">{feature.title}</h3>
+                <p className="text-muted-foreground font-mono text-xs leading-relaxed">{feature.description}</p>
               </Card>
             ))}
           </div>
@@ -157,32 +200,37 @@ const Index = () => {
       </section>
 
       <section id="tokenomics" className="min-h-screen flex items-center justify-center px-6 py-20 relative z-10">
-        <div className="container mx-auto space-y-20">
+        <div className="container mx-auto space-y-16">
           <div className="text-center space-y-6">
-            <h2 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Tokenomics
+            <div className="text-xs text-primary/60 font-mono">{'>'} DISTRIBUTION_MODEL.HEX</div>
+            <h2 className="text-6xl md:text-7xl font-black text-primary">
+              [TOKENOMICS]
             </h2>
-            <p className="text-muted-foreground text-xl max-w-4xl mx-auto leading-relaxed">
-              Fair distribution model designed for sustainable growth and holder benefits
-            </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {distributionData.map((item, i) => (
               <Card
                 key={i}
-                className="group p-10 bg-card/50 backdrop-blur-xl border-border/50 hover:border-transparent transition-all duration-500 relative overflow-hidden hover:scale-105"
+                className="group p-10 bg-black border-2 border-primary/30 hover:border-primary transition-all relative overflow-hidden scan-line"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-                <div className="relative z-10">
-                  <div className={`text-7xl font-bold bg-gradient-to-br ${item.gradient} bg-clip-text text-transparent mb-6`}>
-                    {item.value}%
+                <div className="absolute top-4 right-4 text-xs text-primary/40 font-mono">{item.hex}</div>
+                <div className="space-y-6">
+                  <div className="flex items-baseline gap-2">
+                    <div className="text-7xl font-black text-primary font-mono">{item.value}</div>
+                    <div className="text-3xl font-bold text-primary/60">%</div>
                   </div>
-                  <h3 className="text-2xl font-bold mb-4">{item.name}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {item.name === 'Holders' && 'Automatically distributed to all token holders proportionally based on holdings'}
-                    {item.name === 'Buyback' && 'Strategic token buybacks to support price stability and long-term growth'}
-                    {item.name === 'Partnerships' && 'Ecosystem development and strategic partnership initiatives'}
+                  <div className="h-2 bg-primary/20 relative overflow-hidden">
+                    <div 
+                      className="h-full bg-primary absolute left-0 top-0 transition-all duration-1000 group-hover:w-full"
+                      style={{ width: `${item.value}%` }}
+                    />
+                  </div>
+                  <h3 className="text-2xl font-bold text-primary">{item.name}</h3>
+                  <p className="text-muted-foreground font-mono text-xs leading-relaxed">
+                    {item.name === 'HOLDERS' && '>> AUTO_DISTRIBUTION // PROPORTIONAL_ALLOCATION // INSTANT_SETTLEMENT'}
+                    {item.name === 'BUYBACK' && '>> PRICE_STABILITY // STRATEGIC_ACQUISITION // MARKET_SUPPORT'}
+                    {item.name === 'PARTNERS' && '>> ECOSYSTEM_GROWTH // STRATEGIC_ALLIANCES // DEVELOPMENT_FUND'}
                   </p>
                 </div>
               </Card>
@@ -192,139 +240,126 @@ const Index = () => {
       </section>
 
       <section id="dashboard" className="min-h-screen flex items-center justify-center px-6 py-20 relative z-10">
-        <div className="container mx-auto space-y-16">
+        <div className="container mx-auto space-y-12">
           <div className="text-center space-y-6">
-            <h2 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Live Dashboard
+            <div className="text-xs text-primary/60 font-mono">{'>'} REAL_TIME_METRICS.DB</div>
+            <h2 className="text-6xl md:text-7xl font-black text-primary">
+              [LIVE_DASHBOARD]
             </h2>
-            <p className="text-muted-foreground text-xl">Real-time protocol metrics and transparency data</p>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-4 max-w-7xl mx-auto">
             {[
-              { label: 'Total Volume', value: '$2.4M', icon: 'DollarSign', gradient: 'from-purple-500 to-pink-500' },
-              { label: 'Holders', value: '8,432', icon: 'Users', gradient: 'from-cyan-500 to-blue-500' },
-              { label: 'Distributed', value: '$168K', icon: 'TrendingUp', gradient: 'from-violet-500 to-purple-500' },
-              { label: 'Buyback Fund', value: '$48K', icon: 'ArrowUpCircle', gradient: 'from-pink-500 to-rose-500' },
+              { label: 'TOTAL_VOLUME', value: '$2.4M', hex: '0x2400000', icon: 'DollarSign' },
+              { label: 'HOLDERS', value: '8,432', hex: '0x20E8', icon: 'Users' },
+              { label: 'DISTRIBUTED', value: '$168K', hex: '0x29040', icon: 'TrendingUp' },
+              { label: 'BUYBACK_FUND', value: '$48K', hex: '0xBB80', icon: 'ArrowUpCircle' },
             ].map((stat, i) => (
-              <Card key={i} className="group p-8 bg-card/50 backdrop-blur-xl border-border/50 hover:border-transparent transition-all duration-500 relative overflow-hidden hover:scale-105">
-                <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-                <div className="relative z-10">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-6`}>
-                    <Icon name={stat.icon} size={24} className="text-white" />
+              <Card key={i} className="p-6 bg-black border-2 border-primary/30 hover:border-primary transition-all scan-line group">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-10 h-10 border-2 border-primary bg-primary/10 flex items-center justify-center">
+                    <Icon name={stat.icon} size={20} className="text-primary" />
                   </div>
-                  <div className="text-4xl font-bold mb-2">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-wider">{stat.label}</div>
+                  <div className="text-xs text-primary/40 font-mono">{stat.hex}</div>
                 </div>
+                <div className="text-3xl font-black mb-2 text-primary font-mono">{stat.value}</div>
+                <div className="text-xs text-primary/60 font-mono uppercase tracking-wider">{stat.label}</div>
               </Card>
             ))}
           </div>
 
-          <Card className="p-10 bg-card/50 backdrop-blur-xl border-border/50 max-w-7xl mx-auto relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold mb-10 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                Fee Distribution History
+          <Card className="p-8 bg-black border-2 border-primary/30 max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-bold text-primary">
+                [FEE_DISTRIBUTION_HISTORY]
               </h3>
-              <ResponsiveContainer width="100%" height={350}>
-                <AreaChart data={commissionData}>
-                  <defs>
-                    <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.1} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                  <XAxis dataKey="time" stroke="#888" style={{ fontSize: '14px' }} />
-                  <YAxis stroke="#888" style={{ fontSize: '14px' }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#0f0f14',
-                      border: '1px solid #a855f740',
-                      borderRadius: '12px',
-                      boxShadow: '0 8px 32px rgba(168, 85, 247, 0.2)'
-                    }}
-                  />
-                  <Area type="monotone" dataKey="value" stroke="#a855f7" strokeWidth={3} fillOpacity={1} fill="url(#colorGradient)" />
-                </AreaChart>
-              </ResponsiveContainer>
+              <div className="text-xs text-primary/60 font-mono">BLOCK_HEIGHT: 14,346</div>
             </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={commissionData}>
+                <defs>
+                  <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#00ff41" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#00ff41" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#00ff4130" />
+                <XAxis dataKey="time" stroke="#00ff41" style={{ fontSize: '12px', fontFamily: 'monospace' }} />
+                <YAxis stroke="#00ff41" style={{ fontSize: '12px', fontFamily: 'monospace' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#000',
+                    border: '2px solid #00ff41',
+                    fontFamily: 'monospace',
+                    fontSize: '12px'
+                  }}
+                />
+                <Area type="monotone" dataKey="value" stroke="#00ff41" strokeWidth={2} fillOpacity={1} fill="url(#greenGradient)" />
+              </AreaChart>
+            </ResponsiveContainer>
           </Card>
 
-          <Card className="p-10 bg-card/50 backdrop-blur-xl border-border/50 max-w-7xl mx-auto relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold mb-10 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                Monthly Commission Growth
+          <Card className="p-8 bg-black border-2 border-secondary/30 max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="text-2xl font-bold text-secondary">
+                [COMMISSION_GROWTH_RATE]
               </h3>
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={commissionData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                  <XAxis dataKey="time" stroke="#888" style={{ fontSize: '14px' }} />
-                  <YAxis stroke="#888" style={{ fontSize: '14px' }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#0f0f14',
-                      border: '1px solid #06b6d440',
-                      borderRadius: '12px',
-                      boxShadow: '0 8px 32px rgba(6, 182, 212, 0.2)'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="value" 
-                    stroke="url(#lineGradient)" 
-                    strokeWidth={4} 
-                    dot={{ fill: '#06b6d4', r: 6, strokeWidth: 2, stroke: '#fff' }}
-                    activeDot={{ r: 8, strokeWidth: 3 }}
-                  />
-                  <defs>
-                    <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#a855f7" />
-                      <stop offset="100%" stopColor="#06b6d4" />
-                    </linearGradient>
-                  </defs>
-                </LineChart>
-              </ResponsiveContainer>
+              <div className="text-xs text-secondary/60 font-mono">UPDATE: LIVE</div>
             </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={commissionData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#00ffff30" />
+                <XAxis dataKey="time" stroke="#00ffff" style={{ fontSize: '12px', fontFamily: 'monospace' }} />
+                <YAxis stroke="#00ffff" style={{ fontSize: '12px', fontFamily: 'monospace' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#000',
+                    border: '2px solid #00ffff',
+                    fontFamily: 'monospace',
+                    fontSize: '12px'
+                  }}
+                />
+                <Bar dataKey="value" fill="#00ffff" />
+              </BarChart>
+            </ResponsiveContainer>
           </Card>
         </div>
       </section>
 
-      <section id="contacts" className="min-h-screen flex items-center justify-center px-6 py-20 relative z-10">
+      <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-20 relative z-10">
         <div className="container mx-auto text-center space-y-16 max-w-5xl">
           <div className="space-y-6">
-            <h2 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              Get in Touch
+            <div className="text-xs text-primary/60 font-mono">{'>'} COMMUNICATION_CHANNELS.NET</div>
+            <h2 className="text-6xl md:text-7xl font-black text-primary">
+              [CONNECT]
             </h2>
-            <p className="text-muted-foreground text-xl">Join our community and stay updated with latest developments</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
-              { icon: 'MessageCircle', label: 'Telegram', link: '#', gradient: 'from-blue-500 to-cyan-500' },
-              { icon: 'Twitter', label: 'Twitter', link: '#', gradient: 'from-purple-500 to-pink-500' },
-              { icon: 'Mail', label: 'Email', link: '#', gradient: 'from-violet-500 to-purple-500' },
+              { icon: 'MessageCircle', label: 'TELEGRAM', hex: '0xTG', color: 'primary' },
+              { icon: 'Twitter', label: 'TWITTER', hex: '0xTW', color: 'secondary' },
+              { icon: 'Mail', label: 'EMAIL', hex: '0xML', color: 'primary' },
             ].map((contact, i) => (
               <Card
                 key={i}
-                className="group p-12 bg-card/50 backdrop-blur-xl border-border/50 hover:border-transparent transition-all duration-500 cursor-pointer relative overflow-hidden hover:scale-110"
+                className="group p-10 bg-black border-2 border-primary/30 hover:border-primary transition-all cursor-pointer relative overflow-hidden"
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${contact.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
-                <div className="relative z-10">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${contact.gradient} flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon name={contact.icon} size={32} className="text-white" />
-                  </div>
-                  <div className="text-xl font-bold">{contact.label}</div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-primary transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform" />
+                <div className="text-xs text-primary/40 font-mono mb-6">{contact.hex}</div>
+                <div className="w-16 h-16 border-2 border-primary bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors">
+                  <Icon name={contact.icon} size={32} className="text-primary" />
                 </div>
+                <div className="text-xl font-bold text-primary">{contact.label}</div>
               </Card>
             ))}
           </div>
 
-          <div className="pt-16 border-t border-border/50">
-            <p className="text-muted-foreground">
-              © 2026 ZENT. Built on Solana. Transparency That Pays.
-            </p>
+          <div className="pt-16 border-t-2 border-primary/30">
+            <div className="font-mono text-xs text-primary/60 space-y-2">
+              <div>© 2026 ZENT PROTOCOL // SOLANA BLOCKCHAIN</div>
+              <div>TRANSPARENCY_THAT_PAYS.EXE // ALL SYSTEMS OPERATIONAL</div>
+            </div>
           </div>
         </div>
       </section>
